@@ -1,0 +1,56 @@
+<html>
+<head>
+	<script src="/socket.io/socket.io.js"></script>
+	<script>
+	  var currentValue = getRand();
+	  var position;
+
+	  var socket = io.connect('http://localhost:8080');
+	  socket.on('connect', function (data) {
+	    position = data; 
+	    document.getElementById('clientmatrixid').innerHTML = JSON.stringify(data);
+	    //socket.emit('my other event', { my: 'data' });
+	  });
+
+	  socket.on('update', function(data){
+	  	document.getElementById('serverresponse').innerHTML = JSON.stringify(data);
+	  for(var i = 0; i < data.length;i++){
+	  	if(data[i].x == position.x && data[i].y == position.y){
+	  			currentValue = currentValue + data[i].power;
+
+	  	}
+	  }
+	  });
+
+	function getRand(){
+    	return Math.floor(Math.random()*256);
+	}
+
+	window.setInterval(tick, 100);
+
+    function tick() {
+    	if(currentValue < 256){
+    		var bg = "rgb(" + currentValue + "," + currentValue + "," + currentValue + ")";
+    		console.log(bg);
+    		document.getElementById('container').style.backgroundColor= bg;
+
+    	var currentshadeinc =  Math.round(Math.abs(10 - (currentValue / 32)));
+            
+            currentValue = currentValue + currentshadeinc;
+    	}else{
+    		currentValue = 0;
+    		socket.emit('clap', position)
+    		document.getElementById('container').style.backgroundColor="#FFOOOO"
+    	}
+    	document.getElementById('outputarea').innerHTML = currentValue + " " + currentshadeinc; 
+    }
+	</script>
+</head>
+<body>
+	<div id="container" style="height:150">
+	<div id="clientmatrixid"></div>
+	<div id="outputarea"></div>
+	<div id="serverresponse"></div>
+	</div>
+</body>
+</html>
