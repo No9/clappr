@@ -1,4 +1,4 @@
 clappr
 ======
 
-An solution to the first world problem of hurting your hands at conferences
+A solution to the first world problem of hurting your hands at conferences when you clap too much.
